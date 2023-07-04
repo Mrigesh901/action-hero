@@ -23,7 +23,7 @@ jobs:
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
           docker push backend-image:${{ github.ref }}
      
-      - name:Deploy to EC2 instance
+      - name: Deploy to EC2 instance
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.EC2_HOST }}
