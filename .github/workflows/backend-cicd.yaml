@@ -1,6 +1,7 @@
 
 name: Backend CICD pipeline
 on:
+  workflow_dispatch:
   push:
     tags:
       - 'v*'
