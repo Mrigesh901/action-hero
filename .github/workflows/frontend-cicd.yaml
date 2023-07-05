@@ -17,10 +17,12 @@ jobs:
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          IMAGE_TAG: frontend-v${{ github.sha }}
+        working-directory: frontend
         run: |
-          docker build -t frontend-image:${{ github.ref }} .
+          docker build -t frontend-image:${IMAGE_TAG} .
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-          docker push frontend-image:{{ github.ref }} 
+          docker push frontend-image:{IMAGE_TAG} 
 
       - name: Deploy to EC2 instance
         uses: appleboy/ssh-action@master
@@ -31,6 +33,6 @@ jobs:
           script: |
             docker stop frontend-container || true
             docker rm frontend-container || true
-            docker run -d -p 80:80 --name frontend-container frontend-image:${{ github.ref }}
+            docker run -d -p 80:80 --name frontend-container frontend-image:${IMAGE_TAG}
 
 
