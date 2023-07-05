@@ -24,8 +24,13 @@ jobs:
           if [[ -n "${{ github.event.inputs.tag }}" ]]; then
             echo "tag=${{ github.event.inputs.tag }}" >> $GITHUB_OUTPUT
           else
-            echo "tag=${{ github.ref/refs\/tags\// }}" >> $GITHUB_OUTPUT
+            echo "tag=${{ github.ref }}" >> $GITHUB_OUTPUT
           fi
+
+      - name: Modify tag
+        id: modify_tag
+        run: |
+          echo "tag=${{ steps.set_tag.outputs.tag/refs\/tags\// }}" >>$GITHUB_OUTPUT
           
       - name: Build and push Docker image
         env:
@@ -34,12 +39,12 @@ jobs:
           IMAGE_TAG: ${{ steps.set_tag.outputs.tag }}
         working-directory: backend
         run: |
-          docker build -t mrigeshpatni/backend-crud:${{ steps.set_tag.outputs.tag }} .
+          docker build -t mrigeshpatni/backend-crud:${{ steps.modify_tag.outputs.tag }} .
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-          docker push mrigeshpatni/backend-crud:${{ steps.set_tag.outputs.tag }}
+          docker push mrigeshpatni/backend-crud:${{ steps.modify_tag.outputs.tag }}
      
       - name: Debug docker image refrence
-        run: echo "DOCKER_IMAGE=mrigeshpatni/backend-crud:${{ steps.set_tag.outputs.tag }}"
+        run: echo "DOCKER_IMAGE=mrigeshpatni/backend-crud:${{ steps.modify_tag.outputs.tag }}"
         
       - name: Deploy to EC2 instance
         uses: appleboy/ssh-action@master
@@ -50,5 +55,5 @@ jobs:
           script: |
             docker stop backend-container || true
             docker rm backend-container || true
-            docker pull mrigeshpatni/backend-crud:${{ steps.set_tag.outputs.tag }}
-            docker run -d -p 3333:3333 --name backend-container mrigeshpatni/backend-crud:${{ steps.set_tag.outputs.tag }}
+            docker pull mrigeshpatni/backend-crud:${{ steps.modify_tag.outputs.tag }}
+            docker run -d -p 3333:3333 --name backend-container mrigeshpatni/backend-crud:${{ steps.modify_tag.outputs.tag }}
