@@ -3,8 +3,8 @@ name: Backend CICD pipeline
 on:
   workflow_dispatch:
   push:
-    branches:
-      - main
+    tags:
+      - '*'
 
 jobs:
   build-and-deploy:
@@ -18,7 +18,7 @@ jobs:
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          IMAGE_TAG: backend-v${{ github.sha }}
+          IMAGE_TAG: ${{ github.ref }}
         working-directory: backend
         run: |
           docker build -t mrigeshpatni/backend-crud:$IMAGE_TAG .
@@ -26,7 +26,7 @@ jobs:
           docker push mrigeshpatni/backend-crud:$IMAGE_TAG
      
       - name: Debug docker image refrence
-        run: echo "DOCKER_IMAGE=mrigeshpatni/backend-crud:$IMAGE_TAG"
+        run: echo "DOCKER_IMAGE=mrigeshpatni/backend-crud:${{ github.ref }}"
         
       - name: Deploy to EC2 instance
         uses: appleboy/ssh-action@master
@@ -34,7 +34,8 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          run: mkdir hello
           script: |
-            docker pull mrigeshpatni/backend-crud:$IMAGE_TAG
-            docker run -d -p 3333:3333 --name backend-container mrigeshpatni/backend-crud:$IMAGE_TAG
+            docker stop backend-container || true
+            docker rm backend-container || true
+            docker pull mrigeshpatni/backend-crud:${{ github.ref }}
+            docker run -d -p 3333:3333 --name backend-container mrigeshpatni/backend-crud:${{ github.ref }}
