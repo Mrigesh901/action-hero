@@ -24,7 +24,7 @@ jobs:
           if [[ -n "${{ github.event.inputs.tag }}" ]]; then
             echo "tag=${{ github.event.inputs.tag }}" >> $GITHUB_OUTPUT
           else
-            echo "tag=${{ github.ref }}" >> $GITHUB_OUTPUT
+            echo "tag=${{ github.ref/refs\/tags\// }}" >> $GITHUB_OUTPUT
           fi
           
       - name: Build and push Docker image
