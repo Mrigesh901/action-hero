@@ -29,7 +29,7 @@ jobs:
       - name: Modify Tag
         id: modify_tag
         run: |
-          echo "tag=${{ steps.set_tag.outputs.tag/refs\/tags\// }}" >> $GITHUB_OUTPUT
+          echo "tag=${{ steps.set_tag.outputs.tag//$'refs/tags/'/ }}" >> $GITHUB_OUTPUT
       - name: Build and push docker image
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
