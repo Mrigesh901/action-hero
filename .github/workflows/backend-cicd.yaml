@@ -22,9 +22,9 @@ jobs:
         id: set_tag
         run: |
           if [[ -n "${{ github.event.inputs.tag }}" ]]; then
-            echo "::set-output name=tag::${{ github.event.inputs.tag }}"
+            echo "tag=${{ github.event.inputs.tag }}" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=tag::${{ github.ref }}"
+            echo "tag=${{ github.ref }}" >> $GITHUB_OUTPUT
           fi
           
       - name: Build and push Docker image
