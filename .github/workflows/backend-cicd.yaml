@@ -30,7 +30,7 @@ jobs:
       - name: Modify tag
         id: modify_tag
         run: |
-          echo "tag=${{ steps.set_tag.outputs.tag//$'refs/tags/'/ }}" >>$GITHUB_OUTPUT
+          echo "tag=${{ steps.set_tag.outputs.tag | awk -F '/' '{print $3}' }}" >>$GITHUB_OUTPUT
           
       - name: Build and push Docker image
         env:
