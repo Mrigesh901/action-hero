@@ -1,12 +1,11 @@
 
-name: frontend cicd pipeline
-
+name: Frontend CICD pipeline
 on:
   workflow_dispatch:
     inputs:
       tag:
-      description: "Tag value for docker image"
-      required: true
+        description: "Tag value for docker image"
+        required: true
   push:
     tags:
       - '*'
