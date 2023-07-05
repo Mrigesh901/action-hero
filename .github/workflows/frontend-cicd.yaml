@@ -20,9 +20,9 @@ jobs:
           IMAGE_TAG: frontend-v${{ github.sha }}
         working-directory: frontend
         run: |
-          docker build -t frontend-image:${IMAGE_TAG} .
+          docker build -t mrigeshpatni/frontend-crud:${IMAGE_TAG} .
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-          docker push frontend-image:{IMAGE_TAG} 
+          docker push mrigeshpatni/frontend:{IMAGE_TAG} 
 
       - name: Deploy to EC2 instance
         uses: appleboy/ssh-action@master
@@ -33,6 +33,6 @@ jobs:
           script: |
             docker stop frontend-container || true
             docker rm frontend-container || true
-            docker run -d -p 80:80 --name frontend-container frontend-image:${IMAGE_TAG}
+            docker run -d -p 80:80 --name frontend-container mrigeshpatni/frontend-crud:${IMAGE_TAG}
 
 
