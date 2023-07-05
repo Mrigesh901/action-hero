@@ -21,9 +21,9 @@ jobs:
           IMAGE_TAG: ${{ github.ref }}
         working-directory: backend
         run: |
-          docker build -t mrigeshpatni/backend-crud:$IMAGE_TAG .
+          docker build -t mrigeshpatni/backend-crud:${{ github.ref }} .
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-          docker push mrigeshpatni/backend-crud:$IMAGE_TAG
+          docker push mrigeshpatni/backend-crud:${{ github.ref }}
      
       - name: Debug docker image refrence
         run: echo "DOCKER_IMAGE=mrigeshpatni/backend-crud:${{ github.ref }}"
