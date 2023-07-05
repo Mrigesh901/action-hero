@@ -25,7 +25,7 @@ jobs:
         run: |
           docker build -t mrigeshpatni/frontend-crud:${{ github.event.inputs.tag }} .
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-          docker push mrigeshpatni/frontend:${{ github.event.inputs.tag }}
+          docker push mrigeshpatni/frontend-crud:${{ github.event.inputs.tag }}
 
       - name: Deploy to EC2 instance
         uses: appleboy/ssh-action@master
