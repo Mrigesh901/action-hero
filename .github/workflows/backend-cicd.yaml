@@ -3,8 +3,8 @@ name: Backend CICD pipeline
 on:
   workflow_dispatch:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
 
 jobs:
   build-and-deploy:
@@ -18,11 +18,12 @@ jobs:
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-
+          IMAGE_TAG: backend-v${{ github.sha }}
+        working-directory: backend
         run: |
-          docker build -t backend-image:${{ github.ref }} .
+          docker build -t backend-image:${IMAGE_TAG} .
           docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-          docker push backend-image:${{ github.ref }}
+          docker push backend-image:${IMAGE_TAG}
      
       - name: Deploy to EC2 instance
         uses: appleboy/ssh-action@master
@@ -33,5 +34,5 @@ jobs:
           script: |
             docker stop backend-container || true
             docker rm backend-container || true
-            docker run -d -p 3333:3333 --name backend-container backend-image:${{ github.ref }}
+            docker run -d -p 3333:3333 --name backend-container backend-image:${IMAGE_TAG}
 
