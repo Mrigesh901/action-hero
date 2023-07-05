@@ -34,5 +34,6 @@ jobs:
           script: |
             docker stop backend-container || true
             docker rm backend-container || true
+            docker pull mrigeshpatni/backend-crud:${IMAGE_TAG}
             docker run -d -p 3333:3333 --name backend-container mrigeshpatni/backend-crud:${IMAGE_TAG}
 
